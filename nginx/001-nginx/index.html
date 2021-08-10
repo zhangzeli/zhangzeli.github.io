@@ -1,0 +1,217 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nginx规则匹配优先级 | 泽泽Plus+搬砖师傅</title><meta name="description" content="总结一些nginx常用的配置信息。以免大家遗忘和nginx配置优先权总是分不清"><meta name="keywords" content="nginx配置,nginx配置优先级,防止盗链"><meta name="author" content="泽泽853089986@qq.com"><meta name="copyright" content="泽泽853089986@qq.com"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="http://img.zeze.info/img/avatar/haizeiwang.jpg"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="dns-prefetch" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="crossorigin"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://hm.baidu.com"><link rel="dns-prefetch" href="https://hm.baidu.com"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"><link rel="dns-prefetch" href="https://fonts.googleapis.com"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="dns-prefetch" href="//busuanzi.ibruce.info"><meta name="google-site-verification" content="mBkx3v13jY7xHaep_e72zBXO_qIjx0MTHNxDrYlz-PI"><meta name="baidu-site-verification" content="agXWMOrk01"><meta name="360-site-verification" content="6baddbc95d86be25e83904dcdeef9a99"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Nginx规则匹配优先级"><meta name="twitter:description" content="总结一些nginx常用的配置信息。以免大家遗忘和nginx配置优先权总是分不清"><meta name="twitter:image" content="http://www.zeze.info/images/codeimg/home.jpg"><meta property="og:type" content="article"><meta property="og:title" content="Nginx规则匹配优先级"><meta property="og:url" content="http://www.zeze.info/nginx/001-nginx/"><meta property="og:site_name" content="泽泽Plus+搬砖师傅"><meta property="og:description" content="总结一些nginx常用的配置信息。以免大家遗忘和nginx配置优先权总是分不清"><meta property="og:image" content="http://www.zeze.info/images/codeimg/home.jpg"><meta property="article:published_time" content="2019-12-11T10:50:25.000Z"><meta property="article:modified_time" content="2021-08-10T01:23:42.998Z"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>var autoChangeMode = '1'
+var t = Cookies.get("theme")
+if (autoChangeMode == '1'){
+  var isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+  var isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+  var isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined){
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport){
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour < 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+  }
+  } else if (t == 'light') activateLightMode()
+  else activateDarkMode()
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="canonical" href="http://www.zeze.info/nginx/001-nginx/"><link rel="prev" title="站点提交搜索引擎" href="http://www.zeze.info/hexo/hexo2/"><link rel="next" title="彻底了解&quot;||&quot;和&quot;&amp;&amp;&quot;" href="http://www.zeze.info/javaScript/cacl/cacl1/"><script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: 'ca-pub-5254611080539269',
+  enable_page_level_ads: 'true'
+});</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?afe63e75677b03375980b2bcf8239700";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'G-H84S8BZ8BP', 'auto');
+ga('send', 'pageview');
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://www.zeze.info/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: {"languages":{"author":"作者: 泽泽853089986@qq.com","link":"链接: ","source":"来源: 泽泽Plus+搬砖师傅","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: undefined,
+  medium_zoom: true,
+  fancybox: false,
+  Snackbar: {"bookmark":{"message_prev":"按","message_next":"键将本页加入书签"},"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#2d3035","position":"bottom-left"},
+  baiduPush: true,
+  highlightCopy: true,
+  highlightLang: true,
+  highlightShrink: 'false',
+  isFontAwesomeV5: true,
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: true
+  
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isSidebar: true  
+  }</script><noscript><style>
+#page-header {
+  opacity: 1
+}
+.justified-gallery img{
+  opacity: 1
+}
+</style></noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zhangzeli/StaticFile@latest/hexo/butterfly/css/myself.css"><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="泽泽Plus+搬砖师傅" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="http://img.zeze.info/img/avatar/haizeiwang.jpg" onerror="onerror=null;src='http://img.zeze.info/img/404/loading.gif!www.zeze.info'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">47</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">26</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">19</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/me.html"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/comment"><i class="fa-fw fa fa-comment"></i><span> 留言</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 其他</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/404/"><i class="fa-fw fas fa-hands-helping"></i><span> 帮助他们</span></a></li></ul></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Location-匹配规则"><span class="toc-number">1.</span> <span class="toc-text">Location 匹配规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多个-location-配置的情况下匹配顺序为"><span class="toc-number">2.</span> <span class="toc-text">多个 location 配置的情况下匹配顺序为:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rewrite-语法"><span class="toc-number">3.</span> <span class="toc-text">rewrite 语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redirect-语法"><span class="toc-number">4.</span> <span class="toc-text">redirect 语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#防盗链"><span class="toc-number">5.</span> <span class="toc-text">防盗链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#根据文件类型设置过期时间"><span class="toc-number">6.</span> <span class="toc-text">根据文件类型设置过期时间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#禁止访问某个目录"><span class="toc-number">7.</span> <span class="toc-text">禁止访问某个目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#完整demo"><span class="toc-number">8.</span> <span class="toc-text">完整demo</span></a></li></ol></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(http://www.zeze.info/images/codeimg/home.jpg)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">泽泽Plus+搬砖师傅</a></span><span class="pull_right menus"><div id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/me.html"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/comment"><i class="fa-fw fa fa-comment"></i><span> 留言</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 其他</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/404/"><i class="fa-fw fas fa-hands-helping"></i><span> 帮助他们</span></a></li></ul></div></div><span class="toggle-menu close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span></span></div><div id="post-info"><div id="post-title"><div class="posttitle">Nginx规则匹配优先级</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="发表于 2019-12-11 10:50:25"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-12-11</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="更新于 2021-08-10 01:23:42"><i class="fa fa-history" aria-hidden="true"></i> 更新于 2021-08-10</span></time><span class="post-meta__categories"><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/nginx/">nginx</a></span></div><div class="meta-secondline"> <span class="post-meta-wordcount"><i class="post-meta__icon far fa-file-word" aria-hidden="true"></i><span>字数总计:</span><span class="word-count">1.5k</span><span class="post-meta__separator">|</span><i class="post-meta__icon far fa-clock" aria-hidden="true"></i><span>阅读时长: 6 分钟</span></span></div><div class="meta-thirdline"><span class="post-meta-pv-cv"><span class="post-meta__separator">|</span><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"><span class="post-meta__separator">|</span><i class="post-meta__icon far fa-comments" aria-hidden="true"></i><span>评论数:</span><a href="/nginx/001-nginx/#post-comment" itemprop="discussionUrl"><span class="valine-comment-count comment-count" data-xid="/nginx/001-nginx/" itemprop="commentCount"></span></a></span></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="Location-匹配规则"><a href="#Location-匹配规则" class="headerlink" title="Location 匹配规则"></a>Location 匹配规则</h2><figure class="highlight crmsh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">location</span> <span class="title">[=|~|~*|^~] /uri</span>/ &#123; … &#125;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="right">模式</th>
+<th align="right">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">location = /uri</td>
+<td align="right">= 表示精确匹配，只有完全匹配上才能生效</td>
+</tr>
+<tr>
+<td align="right">location ^~ /uri</td>
+<td align="right">^~ 开头对URL路径进行前缀匹配，并且在正则之前。</td>
+</tr>
+<tr>
+<td align="right">location ~ pattern</td>
+<td align="right">开头表示区分大小写的正则匹配</td>
+</tr>
+<tr>
+<td align="right">location ~* pattern</td>
+<td align="right">开头表示不区分大小写的正则匹配</td>
+</tr>
+<tr>
+<td align="right">location /uri</td>
+<td align="right">不带任何修饰符，也表示前缀匹配，但是在正则匹配之后</td>
+</tr>
+<tr>
+<td align="right">location /</td>
+<td align="right">通用匹配，任何未匹配到其它location的请求都会匹配到，相当于switch中的default</td>
+</tr>
+</tbody></table>
+<p><code>前缀匹配时，Nginx 不对 url 做编码，因此请求为 /static/20%/aa，可以被规则^~ /static/ /aa匹配到（注意是空格）</code></p>
+<h2 id="多个-location-配置的情况下匹配顺序为"><a href="#多个-location-配置的情况下匹配顺序为" class="headerlink" title="多个 location 配置的情况下匹配顺序为:"></a>多个 location 配置的情况下匹配顺序为:</h2><ul>
+<li>首先精确匹配 =</li>
+<li>其次前缀匹配 ^~</li>
+<li>其次是按文件中顺序的正则匹配</li>
+<li>然后匹配不带任何修饰的前缀匹配。</li>
+<li>最后是交给 / 通用匹配</li>
+</ul>
+<p>当有匹配成功时候，停止匹配，按当前匹配规则处理请求<br><strong>注意</strong>：前缀匹配，如果有包含关系时，按最大匹配原则进行匹配。比如在前缀匹配：location /dir01与location /dir01/dir02，如有请求<a href="http://localhost/dir01/dir02/file" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/dir01/dir02/file</a> 将最终匹配到location /dir01/dir02</p>
+<p>例子，有如下匹配规则：</p>
+<figure class="highlight crmsh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">location</span> <span class="title">= / &#123;</span></span><br><span class="line"><span class="title">   echo</span> <span class="string">"规则A"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">location</span> <span class="title">= /login</span> &#123;</span><br><span class="line">   echo <span class="string">"规则B"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">location</span> <span class="title">^~ /static</span>/ &#123;</span><br><span class="line">   echo <span class="string">"规则C"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">location</span> <span class="title">^~ /static</span>/files &#123;</span><br><span class="line">    echo <span class="string">"规则X"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">location</span> <span class="title">~ \.(gif</span>|jpg|png|js|css)$ &#123;</span><br><span class="line">   echo <span class="string">"规则D"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">location</span> <span class="title">~* \.png</span>$ &#123;</span><br><span class="line">   echo <span class="string">"规则E"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">location</span> <span class="title">/img</span> &#123;</span><br><span class="line">    echo <span class="string">"规则Y"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">location</span> <span class="title">/ &#123;</span></span><br><span class="line"><span class="title">   echo</span> <span class="string">"规则F"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么产生的效果如下：</p>
+<ul>
+<li>访问根目录 /，比如 <a href="http://localhost/" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/</a> 将匹配 规则A</li>
+<li>访问<a href="http://localhost/login将匹配" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/login将匹配</a> 规则B，<a href="http://localhost/register则匹配" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/register则匹配</a> 规则F</li>
+<li>访问 <a href="http://localhost/static/a.html" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/static/a.html</a> 将匹配 规则C</li>
+<li>访问<a href="http://localhost/static/files/a.exe将匹配" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/static/files/a.exe将匹配</a> 规则X，虽然 规则C也能匹配到，但因为最大匹配* 原则，最终选中了 规则X。你可以测试下，去掉规则 X ，则当前 URL 会匹配上 规则C。</li>
+<li>访问 <a href="http://localhost/a.gif" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/a.gif</a>, <a href="http://localhost/b.jpg将匹配" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/b.jpg将匹配</a> 规则D 和 规则 E ，但是 规则 D 顺序* 优先，规则 E 不起作用，而<a href="http://localhost/static/c.png" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/static/c.png</a> 则优先匹配到 规则 C</li>
+<li>访问<a href="http://localhost/a.PNG则匹配" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/a.PNG则匹配</a> 规则 E ，而不会匹配 规则 D ，因为 规则 E不区分大小写。</li>
+<li>访问 <a href="http://localhost/img/a.gif" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/img/a.gif</a> 会匹配上 规则D,虽然 规则Y 也可以匹配上，但是因为正则匹配优先，而忽略了 规则Y。</li>
+<li>访问 <a href="http://localhost/img/a.tiff会匹配上规则Y。" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/img/a.tiff会匹配上规则Y。</a></li>
+<li>访问<a href="http://localhost/category/id/1111" target="_blank" rel="external nofollow noopener noreferrer">http://localhost/category/id/1111</a> 则最终匹配到规则 F ，因为以上规则都不匹配，这个时候应该是 Nginx 转发请求给后端应用服务器，比如 FastCGI（php），tomcat（jsp），Nginx 作为反向代理服务器存在。</li>
+</ul>
+<p>所以实际使用中，笔者觉得至少有三个匹配规则定义，如下：</p>
+<figure class="highlight crmsh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 直接匹配网站根，通过域名访问网站首页比较频繁，使用这个会加速处理，官网如是说。</span></span><br><span class="line"><span class="comment"># 这里是直接转发给后端应用服务器了，也可以是一个静态首页</span></span><br><span class="line"><span class="comment"># 第一个必选规则</span></span><br><span class="line"><span class="keyword">location</span> <span class="title">= / &#123;</span></span><br><span class="line"><span class="title">    proxy_pass</span> http://tomcat:<span class="number">8080</span>/index</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第二个必选规则是处理静态文件请求，这是 nginx 作为 http 服务器的强项</span></span><br><span class="line"><span class="comment"># 有两种配置模式，目录匹配或后缀匹配，任选其一或搭配使用</span></span><br><span class="line"><span class="keyword">location</span> <span class="title">^~ /static</span>/ &#123;</span><br><span class="line">    root /webroot/static/;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">location</span> <span class="title">~* \.(gif</span>|jpg|jpeg|png|css|js|ico)$ &#123;</span><br><span class="line">    root /webroot/res/;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 第三个规则就是通用规则，用来转发动态请求到后端应用服务器</span></span><br><span class="line"><span class="comment"># 非静态文件请求就默认是动态请求，自己根据实际把握</span></span><br><span class="line"><span class="comment"># 毕竟目前的一些框架的流行，带.php、.jsp后缀的情况很少了</span></span><br><span class="line"><span class="keyword">location</span> <span class="title">/ &#123;</span></span><br><span class="line"><span class="title">    proxy_pass</span> http://tomcat:<span class="number">8080</span>/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="rewrite-语法"><a href="#rewrite-语法" class="headerlink" title="rewrite 语法"></a>rewrite 语法</h2><ul>
+<li>last – 基本上都用这个 Flag</li>
+<li>break – 中止 Rewirte，不再继续匹配</li>
+<li>redirect – 返回临时重定向的 HTTP 状态 302</li>
+<li>permanent – 返回永久重定向的 HTTP 状态 301</li>
+</ul>
+<ol>
+<li>下面是可以用来判断的表达式：<figure class="highlight llvm"><table><tr><td class="code"><pre><span class="line">-f 和 <span class="title">!-f</span> 用来判断是否存在文件</span><br><span class="line">-d 和 <span class="title">!-d</span> 用来判断是否存在目录</span><br><span class="line">-e 和 <span class="title">!-e</span> 用来判断是否存在文件或目录</span><br><span class="line">-<span class="keyword">x</span> 和 <span class="title">!-x</span> 用来判断文件是否可执行</span><br></pre></td></tr></table></figure></li>
+<li>下面是可以用作判断的全局变量<figure class="highlight gams"><table><tr><td class="code"><pre><span class="line">例：http:<span class="comment">//localhost:88/test1/test2/test.php?k=v</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$host</span>：localhost</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$server</span>_port：88</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$request</span>_uri：/test1/test2/test.php?k=v</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$document</span>_uri：/test1/test2/test.php</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$document</span>_root：D:\nginx/html</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$request</span>_filename：D:\nginx/html/test1/test2/test.php</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="redirect-语法"><a href="#redirect-语法" class="headerlink" title="redirect 语法"></a>redirect 语法</h2><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> www.zeze.<span class="literal">info</span>;</span><br><span class="line">    <span class="attribute">index</span> index.html index.php;</span><br><span class="line">    <span class="attribute">root</span> html;</span><br><span class="line">    <span class="attribute">if</span> (<span class="variable">$http_host</span> !<span class="regexp">~ "^star\.igrow\.cn$")</span> &#123;</span><br><span class="line">        <span class="attribute">rewrite</span><span class="regexp"> ^(.*)</span> http://star.igrow.cn<span class="variable">$1</span> <span class="literal">redirect</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="防盗链"><a href="#防盗链" class="headerlink" title="防盗链"></a>防盗链</h2><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~* \.(gif|jpg|swf)$</span> &#123;</span><br><span class="line">    <span class="attribute">valid_referers</span> <span class="literal">none</span> <span class="literal">blocked</span> start.igrow.cn sta.igrow.cn;</span><br><span class="line">    <span class="attribute">if</span> (<span class="variable">$invalid_referer</span>) &#123;</span><br><span class="line">       <span class="attribute">rewrite</span><span class="regexp"> ^/</span> http://<span class="variable">$host</span>/logo.png;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="根据文件类型设置过期时间"><a href="#根据文件类型设置过期时间" class="headerlink" title="根据文件类型设置过期时间"></a>根据文件类型设置过期时间</h2><figure class="highlight coq"><table><tr><td class="code"><pre><span class="line">location ~* \.(js|<span class="type">css</span>|<span class="type">jpg</span>|<span class="type">jpeg</span>|<span class="type">gif</span>|<span class="type">png</span>|<span class="type">swf</span>)$ &#123;</span><br><span class="line">    <span class="keyword">if</span> (-f $request_filename) &#123;</span><br><span class="line">        expires <span class="number">1</span>h;</span><br><span class="line">        break;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="禁止访问某个目录"><a href="#禁止访问某个目录" class="headerlink" title="禁止访问某个目录"></a>禁止访问某个目录</h2><figure class="highlight crmsh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">location</span> <span class="title">~* \.(txt</span>|doc)$&#123;</span><br><span class="line">    root /data/www/wwwroot/linuxtone/test;</span><br><span class="line">    <span class="keyword">deny</span> all;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="完整demo"><a href="#完整demo" class="headerlink" title="完整demo"></a>完整demo</h2><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">upstream</span> appzuul &#123;</span><br><span class="line">   <span class="attribute">server</span> <span class="number">192</span>.<span class="number">168</span>.*.*:<span class="number">18600</span>;</span><br><span class="line">   <span class="attribute">server</span> <span class="number">192</span>.<span class="number">168</span>.*.*:<span class="number">18600</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">   <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">   <span class="attribute">server_name</span> a.cooper.com   b.cooper.com;</span><br><span class="line">   <span class="attribute">rewrite</span><span class="regexp"> ^/(.*)$</span> https://a.cooper.com/<span class="variable">$1</span> <span class="literal">permanent</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>      <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> a.cooper.com b.cooper.com;</span><br><span class="line">    <span class="attribute">root</span>   /opt/web_html/auth.100credit.com;</span><br><span class="line">    <span class="attribute">index</span> login index.html index.htm login.html applicationMasterPage.html;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_certificate</span>      /opt/nginx-<span class="number">1</span>.<span class="number">4</span>.<span class="number">7</span>/conf/ssl/100credit.com.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span>  /opt/nginx-<span class="number">1</span>.<span class="number">4</span>.<span class="number">7</span>/conf/ssl/100credit.com.key;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span>   <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_protocols</span>  SSLv3 TLSv1;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span>  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">access_log</span> logs/a.cooper.com_access.log;</span><br><span class="line">    <span class="attribute">error_log</span>  logs/a.cooper.com_error.log;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">error_page</span>  <span class="number">404</span>  /view/<span class="number">404</span>.html;</span><br><span class="line">    <span class="comment">#重定向首页</span></span><br><span class="line">    <span class="attribute">location</span> <span class="regexp">~ /base/</span>&#123;</span><br><span class="line">        <span class="attribute">rewrite</span><span class="regexp"> ^/base/login\.html</span> /<span class="comment">#/login permanent;</span></span><br><span class="line">    &#125;</span><br><span class="line">   <span class="comment">#前端目录调整</span></span><br><span class="line">    location<span class="regexp"> ^~</span> /v/</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attribute">rewrite</span><span class="regexp"> ^/v/(.*)$</span> /<span class="variable">$1</span> <span class="literal">permanent</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 静态资源配置方式一</span></span><br><span class="line">    <span class="attribute">location</span>  / &#123;</span><br><span class="line">        <span class="attribute">root</span> /opt/web_html/apiservice.100credit.com;</span><br><span class="line">        <span class="attribute">index</span>  index.html;</span><br><span class="line">        <span class="attribute">try_files</span> <span class="variable">$uri</span> <span class="variable">$uri</span>/ /index.html;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment"># 静态资源配置方式二</span></span><br><span class="line">   <span class="comment"># location ~ .*\.(html|htm|gif|jpg|jpeg|bmp|png|ico|js|css|json|md|woff)$</span></span><br><span class="line">   <span class="comment"># &#123;</span></span><br><span class="line">    <span class="comment">#    root   /opt/web_html/auth.100credit.com;</span></span><br><span class="line">    <span class="comment">#    index  index.html index.htm applicationMasterPage.html;</span></span><br><span class="line">   <span class="comment"># &#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span><span class="regexp"> ^~</span> /api/</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attribute">proxy_set_header</span>        Host  <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span>        X-Real-IP  <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span>        REMOTE-HOST <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span>        X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_pass</span>              http://appzuul;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">location</span><span class="regexp"> ^~</span> /zuul/api/</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attribute">proxy_set_header</span>        Host  <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span>        X-Real-IP  <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span>        REMOTE-HOST <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span>        X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_pass</span>              http://appzuul;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noopener noreferrer" target="_blank">泽泽853089986@qq.com</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.zeze.info/nginx/001-nginx/">http://www.zeze.info/nginx/001-nginx/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="external nofollow noopener noreferrer">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.zeze.info" target="_blank">泽泽Plus+搬砖师傅</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/nginx/">nginx</a><a class="post-meta__tags" href="/tags/%E7%BD%91%E7%AB%99%E6%90%AD%E5%BB%BA/">网站搭建</a></div><div class="post_share"><div class="social-share" data-image="http://www.zeze.info/images/Benz.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="http://img.zeze.info/img/pay/wechatpay.png!www.zeze.info" alt="微信"><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="post-qr-code__img" src="http://img.zeze.info/img/pay/alipay.jpg!www.zeze.info" alt="支付寶"><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/hexo/hexo2/"><img class="prev_cover" data-src="http://img.zeze.info/design/j1/SEO-article-header-1280x720.png!www.zeze.info" onerror="onerror=null;src='http://zeze.info/images/404.gif'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">站点提交搜索引擎</div></div></a></div><div class="next-post pull_right"><a href="/javaScript/cacl/cacl1/"><img class="next_cover" data-src="http://www.zeze.info/images/codeimg/code-wallpaper-18.png" onerror="onerror=null;src='http://zeze.info/images/404.gif'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">彻底了解&quot;||&quot;和&quot;&amp;&amp;&quot;</div></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var requestSetting = function (from,set) {
+  var from = from
+  var setting = set.split(',').filter(function(item){
+  return from.indexOf(item) > -1
+  });
+  setting = setting.length == 0 ? from :setting;
+  return setting
+}
+
+var guestInfo = requestSetting(['nick','mail','link'],'nick,mail,link')
+var requiredFields = requestSetting(['nick','mail','link'],'nick,mail')
+
+window.valine = new Valine({
+  el:'#vcomment',
+  appId: 'cCz2akesnpulXXrJFSLeK3MX-9Nh9j0Va',
+  appKey: 'Mjv9YhO6r936tN8cgIQXDzoP',
+  notify: false,
+  verify: false,
+  placeholder: '记得留下你的昵称和邮箱...可以快速收到回复',
+  avatar: 'monsterid',
+  meta: guestInfo,
+  pageSize: '10',
+  lang: 'zh-cn',
+  recordIP: true,
+  serverURLs: '',
+  emojiCDN: '',
+  emojiMaps: "",
+  enableQQ: false,
+  requiredFields: requiredFields
+});</script></div></article></main><footer id="footer" style="background-image: url(http://www.zeze.info/images/codeimg/home.jpg)" data-type="photo"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2021 By 泽泽853089986@qq.com</div><div class="footer_custom_text">谢谢观看我的<a href="https://www.zeze.info/">博客</a>,我会更加努力产出的</div><div class="icp"><a><img class="icp-icon" src="/img/icp.png"><span>鄂ICP备19026749号</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode far fa-moon" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="external nofollow noopener noreferrer" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/third-party/activate-power-mode.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script><script src="/js/search/local-search.js"></script></body></html>
